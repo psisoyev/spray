@@ -191,7 +191,7 @@ private class HttpHostConnectionSlot(host: String, port: Int,
   def redirect(location: Location, method: HttpMethod, ctx: RequestContext) {
     val baseUri = ctx.request.uri.toEffectiveHttpRequestUri(Uri.Host(host), port, sslEncryption)
     val redirectUri = location.uri.resolvedAgainst(baseUri)
-    val request = HttpRequest(method, redirectUri)
+    val request = ctx.request.copy(method = method, uri = redirectUri)
 
     if (log.isDebugEnabled) log.debug("Redirecting to {}", redirectUri.toString)
     IO(Http)(context.system) ! ctx.copy(request = request, redirectsLeft = ctx.redirectsLeft - 1)
